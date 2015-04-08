@@ -17,6 +17,8 @@
 #include "Event.h"
 #include "Ships.h"
 
+
+
 bool intro()
 {
     
@@ -219,175 +221,101 @@ bool intro()
 	}
 }
 
+void enemy_direction(int & enemy_x_seed, bool & enemies_moving_left)
+{
+    int dx = 2; // Enemy movement speed.
+    if (enemy_x_seed == 10)
+    {
+        enemies_moving_left = false;
+    }
+    if (enemy_x_seed == 190)
+    {
+        enemies_moving_left = true;
+    }
+    enemies_moving_left ? enemy_x_seed -= dx : enemy_x_seed += dx;
+}
+
 void game()
 {
- 
+    //----------------------------------------------//
+    // Please note:
+    //
+    // 1. The struct Aliens holds all of the alien
+    //    arrays.
+    // 2. The laser_timer exists so that lasers can't
+    //    be fired too quickly, and the space bar
+    //    cannot be held down to fire lasers.
+    // 3. enemies_moving_left controls the direction
+    //    the aliens are moving in.
+    //----------------------------------------------//
+    struct Aliens alien;
     Surface surface(W, H);
 	Event event;
-    AquaAlien aqua[SHIPS_MAX];
-    PurpleAlien purple[SHIPS_MAX];
-    RedAlien red[SHIPS_MAX];
-    FlagShip flagship[SHIPS_MAX];
     Galaxip startship;
     Laser laser[LSR_MAX];
-    int x = 100;
-    int y = 60;
-    int dx = 2;
-    bool left = true;
-    int laser_counter = 1;
+    int enemy_x_seed = 100;
+    int enemy_y = 60;
+    int laser_timer = 1;
+    bool enemies_moving_left = true;
 
-    startship.set_x(320);
-    startship.set_y(400);
-
-    while (1)
+    while (1) /**  Loop while the game is playing. **/
     {
+        int enemy_x = enemy_x_seed; /** initial x of the first enemy **/
+        
         if (event.poll() && event.type() == QUIT) break;
 
         surface.lock();
 		surface.fill(BLACK);
-        int t = x;
-        for (int i = 0; i < 10; i++)
+        
+        for (int i = 0; i < SHIPS_MAX; i++)
         {
-            if (flagship[i].is_alive())
-            {
-                flagship[i].set_x(t);
-                flagship[i].set_y(y);
-                surface.put_image(flagship[i].get_image(),
-                                  flagship[i].get_rect());
-            }
-            if (red[i].is_alive())
-            {
-                red[i].set_x(t);
-                red[i].set_y(y + 30);
-                surface.put_image(red[i].get_image(),
-                                  red[i].get_rect());
-            }
-            if (purple[i].is_alive())
-            {
-                purple[i].set_x(t);
-                purple[i].set_y(y + 60);
-                surface.put_image(purple[i].get_image(),
-                                  purple[i].get_rect());
-            }
-            if (aqua[i].is_alive())
-            {
-                aqua[i].set_x(t);
-                aqua[i].set_y(y + 90);
-                surface.put_image(aqua[i].get_image(),
-                                  aqua[i].get_rect());
-            }
-            t += 44;
+            //----------------------------------------------//
+            // Draw all of the enemy ships.
+            //----------------------------------------------//
+            alien.flagship[i].paint(surface, enemy_x, enemy_y);
+            alien.red[i].paint(surface, enemy_x, enemy_y);
+            alien.purple[i].paint(surface, enemy_x, enemy_y);
+            alien.aqua[i].paint(surface, enemy_x, enemy_y);
+
+            enemy_x += ENEMY_SPACING; /** update enemy spacing **/
         }
+
+        /** Update enemy direction **/
+        enemy_direction(enemy_x_seed, enemies_moving_left);
+
+        //----------------------------------------------//
+        // Draw the user's ship.
+        //----------------------------------------------//
         if (startship.is_alive())
         {
             KeyPressed keypressed = get_keypressed();
-            if (keypressed[LEFTARROW])
-            {
-                if (startship.get_x() >= 40)
-                {
-                    startship.set_x(startship.get_x() - 3);
-                }
-            }
-            else if (keypressed[RIGHTARROW])
-            {
-                if (startship.get_x() <= 600)
-                {
-                    startship.set_x(startship.get_x() + 3);
-                }
-            }
-            surface.put_image(startship.get_image(),
-                              startship.get_rect());
+            startship.user_input(keypressed, surface);
         }
         
-        //--------------------------------------
-        // TESTING LASERS
-        //--------------------------------------
+        //----------------------------------------------//
+        // Fire lasers.
+        //----------------------------------------------//
         KeyPressed keypressed = get_keypressed();
-        if (keypressed[SPACE] && laser_counter == 0)
+        if (keypressed[SPACE] && laser_timer == 0)
         {
             for (int i = 0; i < LSR_MAX; i++)
             {
-                if (!laser[i].get_exist())
-                {
-                    laser[i].set_exist(1);
-                    laser[i].set_position(startship);
-                    laser_counter = 3;
-                    break;
-                }
+                if (laser[i].fire_laser(laser_timer, startship)) break;
             }
         }
+
+        //----------------------------------------------//
+        // Draw the lasers.
+        //----------------------------------------------//
         for (int i = 0; i < LSR_MAX; i++)
         {
-            if (laser[i].get_exist())
-            {
-                if (laser[i].get_y() < 0)
-                {
-                    laser[i].set_exist(0);
-                }
-                surface.put_rect(laser[i].get_x(), laser[i].get_y(),
-                                 laser[i].W, laser[i].H,
-                                 laser[i].R, laser[i].G, laser[i].B);
-                laser[i].set_y(laser[i].get_y() - 4);
-                //--------------------------------------
-                // Laser hitting a ship logic
-                //--------------------------------------
-                for (int j = 0; j < SHIPS_MAX; j++)
-                {
-                    if (laser[i] == aqua[j].get_rect() &&
-                        aqua[j].is_alive())
-                    {
-                        aqua[j].kill();
-                        laser[i].set_exist(false);
-                        break;
-                    }
-                    if (laser[i] == purple[j].get_rect()&&
-                        purple[j].is_alive())
-                    {
-                        purple[j].kill();
-                        laser[i].set_exist(false);
-                        break;
-                    }
-                    if (laser[i] == red[j].get_rect()&&
-                        red[j].is_alive())
-                    {
-                        red[j].kill();
-                        laser[i].set_exist(false);
-                        break;
-                    }
-                    if (laser[i] == flagship[j].get_rect()&&
-                        flagship[j].is_alive())
-                    {
-                        flagship[j].kill();
-                        laser[i].set_exist(false);
-                        break;
-                    }
-                }
-            }
+            laser[i].laser_print(surface, alien);
         }
-        if (laser_counter > 0 && !keypressed[SPACE])
+
+        /** Update the laser timer **/
+        if (laser_timer > 0 && !keypressed[SPACE])
         {
-            laser_counter--;
-        }
-        //--------------------------------------
-        // END OF LASER TEST
-        //--------------------------------------
-        
-        if (x == 10)
-        {
-            left = false;
-        }
-        if (x == 190)
-        {
-            left = true;
-        }
-        
-        if (left)
-        {
-            x -= dx;
-        }
-        else
-        {
-            x += dx;
+            laser_timer--;
         }
         
 		surface.unlock();
