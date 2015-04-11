@@ -8,8 +8,10 @@
 
 const int LSR_MAX = 30;
 const int SHIPS_MAX = 10;
-const int ENEMY_SPACING = 44;
+const int ENEMY_SPACING_X = 44;
+const int ENEMY_SPACING_Y = 25;
 const int GALAXIP_SPEED = 4;
+const int ENEMY_SPEED = 2;
 const int ENEMY_FIRE_FREQUENCY = 500;
 // the above variable can also be inserted into the classes.
 // this would allow the aliens to fire at different speeds.
@@ -23,10 +25,6 @@ public:
     {
         rect.x = 320;
         rect.y = 400;
-    }
-    void kill()
-    {
-        alive = false;
     }
     bool is_alive()
     {
@@ -107,9 +105,9 @@ public:
             delete laser;
         }
     }
-    void kill()
+    void set_alive(const bool & a)
     {
-        alive = false;
+        alive = a;
     }
     bool is_alive()
     {
@@ -175,7 +173,7 @@ public:
         if (this->is_alive())
         {
             this->set_x(x);
-            this->set_y(y + 90);
+            this->set_y(y + ENEMY_SPACING_Y * 3);
             surface.put_image(this->get_image(), this->get_rect());
             if (rand() % ENEMY_FIRE_FREQUENCY == 0 &&
                 laser == NULL)
@@ -225,9 +223,9 @@ public:
             delete laser;
         }
     }
-    void kill()
+    void set_alive(const bool & a)
     {
-        alive = false;
+        alive = a;
     }
     bool is_alive()
     {
@@ -293,7 +291,7 @@ public:
         if (this->is_alive())
         {
             this->set_x(x);
-            this->set_y(y + 65);
+            this->set_y(y + ENEMY_SPACING_Y * 1);
             surface.put_image(this->get_image(), this->get_rect());
             if (rand() % ENEMY_FIRE_FREQUENCY == 0 &&
                 laser == NULL)
@@ -337,9 +335,9 @@ public:
             delete laser;
         }
     }
-    void kill()
+    void set_alive(const bool & a)
     {
-        alive = false;
+        alive = a;
     }
     bool is_alive()
     {
@@ -405,14 +403,14 @@ public:
         if (this->is_alive())
         {
             this->set_x(x);
-            this->set_y(y + 40);
+            this->set_y(y + ENEMY_SPACING_Y * 2);
             surface.put_image(this->get_image(), this->get_rect());
             if (rand() % ENEMY_FIRE_FREQUENCY == 0 &&
                 laser == NULL)
             {
                     laser_fire();
             }
-        }        
+        }
     }
     void paint_laser(Surface & surface)
     {
@@ -449,9 +447,9 @@ public:
             delete laser;
         }
     }
-    void kill()
+    void set_alive(const bool & a)
     {
-        alive = false;
+        alive = a;
     }
     bool is_alive()
     {
@@ -517,7 +515,7 @@ public:
         if (this->is_alive())
         {
             this->set_x(x);
-            this->set_y(y + 15);
+            this->set_y(y);
             surface.put_image(this->get_image(), this->get_rect());
             if (rand() % ENEMY_FIRE_FREQUENCY == 0 &&
                 laser == NULL)
@@ -615,7 +613,7 @@ public:
         }
         return false;
     }
-    void laser_print(Surface & surface, Aliens & alien)
+    void laser_print(Surface & surface, Aliens & alien, int & alien_counter)
     {
         if (this->get_exist())
         {
@@ -635,29 +633,33 @@ public:
                 if ((*this) == alien.aqua[j].get_rect() &&
                     alien.aqua[j].is_alive())
                 {
-                    alien.aqua[j].kill();
+                    alien.aqua[j].set_alive(false);
                     this->set_exist(false);
+                    alien_counter--;
                     break;
                 }
                 if ((*this) == alien.purple[j].get_rect() &&
                     alien.purple[j].is_alive())
                 {
-                    alien.purple[j].kill();
+                    alien.purple[j].set_alive(false);
                     this->set_exist(false);
+                    alien_counter--;
                     break;
                 }
                 if ((*this) == alien.red[j].get_rect() &&
                     alien.red[j].is_alive())
                 {
-                    alien.red[j].kill();
+                    alien.red[j].set_alive(false);
                     this->set_exist(false);
+                    alien_counter--;
                     break;
                 }
                 if ((*this) == alien.flagship[j].get_rect() &&
                     alien.flagship[j].is_alive())
                 {
-                    alien.flagship[j].kill();
+                    alien.flagship[j].set_alive(false);
                     this->set_exist(false);
+                    alien_counter--;
                     break;
                 }
             }

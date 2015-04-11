@@ -220,18 +220,24 @@ bool intro()
 	}
 }
 
-void enemy_direction(int & enemy_x_seed, bool & enemies_moving_left)
+void enemy_direction(int & enemy_x_seed, bool & enemies_moving_left, int & enemy_y)
 {
-    int dx = 2; // Enemy movement speed.
-    if (enemy_x_seed == 10)
+    if (enemy_y < 50)
     {
-        enemies_moving_left = false;
+        enemy_y += ENEMY_SPEED;
     }
-    if (enemy_x_seed == 190)
+    else
     {
-        enemies_moving_left = true;
+        if (enemy_x_seed == 10)
+        {
+            enemies_moving_left = false;
+        }
+        if (enemy_x_seed == 190)
+        {
+            enemies_moving_left = true;
+        }
+        enemies_moving_left ? enemy_x_seed -= ENEMY_SPEED : enemy_x_seed += ENEMY_SPEED;
     }
-    enemies_moving_left ? enemy_x_seed -= dx : enemy_x_seed += dx;
 }
 
 void game()
@@ -248,14 +254,14 @@ void game()
     //    the aliens are moving in.
     //----------------------------------------------//
     struct Aliens alien;
-    
     Surface surface(W, H);
 	Event event;
     Galaxip startship;
     Laser laser[LSR_MAX];
     int enemy_x_seed = 100;
-    int enemy_y = 60;
+    int enemy_y = 0 - ENEMY_SPACING_Y * 4;;
     int laser_timer = 1;
+    int alien_counter = SHIPS_MAX * 4;
     bool enemies_moving_left = true;
     while (1) /**  Loop while the game is playing. **/
     {
@@ -265,22 +271,38 @@ void game()
 
         surface.lock();
 		surface.fill(BLACK);
-        
-        for (int i = 0; i < SHIPS_MAX; i++)
+
+        if (alien_counter > 0)
         {
-            //----------------------------------------------//
-            // Draw all of the enemy ships and lasers.
-            //----------------------------------------------//
-            alien.flagship[i].paint(surface, enemy_x, enemy_y, startship);
-            alien.red[i].paint(surface, enemy_x, enemy_y, startship);
-            alien.purple[i].paint(surface, enemy_x, enemy_y, startship);
-            alien.aqua[i].paint(surface, enemy_x, enemy_y, startship);
+            for (int i = 0; i < SHIPS_MAX; i++)
+            {
+                //----------------------------------------------//
+                // Draw all of the enemy ships and lasers.
+                //----------------------------------------------//
+                alien.flagship[i].paint(surface, enemy_x, enemy_y, startship);
+                alien.red[i].paint(surface, enemy_x, enemy_y, startship);
+                alien.purple[i].paint(surface, enemy_x, enemy_y, startship);
+                alien.aqua[i].paint(surface, enemy_x, enemy_y, startship);
 
-            enemy_x += ENEMY_SPACING; /** update enemy spacing **/
+                enemy_x += ENEMY_SPACING_X; /** update enemy spacing **/
+            }
         }
-
+        else
+        {
+            for (int i = 0; i < SHIPS_MAX; i++)
+            {
+                alien.flagship[i].set_alive(true);
+                alien.red[i].set_alive(true);
+                alien.purple[i].set_alive(true);
+                alien.aqua[i].set_alive(true);
+                alien_counter += 4;
+            }
+            enemy_y = 0 - ENEMY_SPACING_Y * 4;
+            enemy_x_seed = 100;
+        }
+        
         /** Update enemy direction **/
-        enemy_direction(enemy_x_seed, enemies_moving_left);
+        enemy_direction(enemy_x_seed, enemies_moving_left, enemy_y);
 
         //----------------------------------------------//
         // Draw the user's ship.
@@ -308,7 +330,7 @@ void game()
         //----------------------------------------------//
         for (int i = 0; i < LSR_MAX; i++)
         {
-            laser[i].laser_print(surface, alien);
+            laser[i].laser_print(surface, alien, alien_counter);
         }
 
         /** Update the laser timer **/
