@@ -267,7 +267,7 @@ void game()
     {
         int enemy_x = enemy_x_seed; /** initial x of the first enemy **/
         
-        if (event.poll() && event.type() == QUIT) break;
+        if (event.poll() && event.type() == QUIT || alien.wave > 5) break;
 
         surface.lock();
 		surface.fill(BLACK);
@@ -292,11 +292,16 @@ void game()
             for (int i = 0; i < SHIPS_MAX; i++)
             {
                 alien.flagship[i].set_alive(true);
+                alien.flagship[i].set_laser_speed();
                 alien.red[i].set_alive(true);
+                alien.red[i].set_laser_speed();
                 alien.purple[i].set_alive(true);
+                alien.purple[i].set_laser_speed();
                 alien.aqua[i].set_alive(true);
+                alien.aqua[i].set_laser_speed();
                 alien_counter += 4;
             }
+            alien.wave++;
             enemy_y = 0 - ENEMY_SPACING_Y * 4;
             enemy_x_seed = 100;
         }

@@ -7,12 +7,12 @@ class EnemyLaser
 {
 public:
     static const int R = 255;
-    static const int G = 0;
-    static const int B = 0;
+    static const int G = 50;
+    static const int B = 50;
     static const int W = 2;
     static const int H = 4;
     EnemyLaser(int x0, int y0)
-        : x(x0), y(y0), exist(false)
+        : x(x0), y(y0), exist(false), laser_speed(4)
     {}
     EnemyLaser()
     {
@@ -42,7 +42,16 @@ public:
     {
         y = y0;
     }
+    void set_laser_speed(const int & s)
+    {
+        laser_speed = s;
+    }
+    int get_laser_speed()
+    {
+        return laser_speed;
+    }
 private:
+    int laser_speed;
     int x;
     int y;
     bool exist;

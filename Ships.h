@@ -96,7 +96,7 @@ class AquaAlien
 public:
     AquaAlien()
         : image("images/galaxian/GalaxianAquaAlien.gif"),
-          rect(image.getRect()), alive(true), attack(false), laser(NULL)
+          rect(image.getRect()), alive(true), attack(false), laser(NULL), laser_speed(4)
     {}
     ~AquaAlien()
     {
@@ -140,6 +140,10 @@ public:
     int get_w()
     {
         return rect.w;
+    }
+    void set_laser_speed()
+    {
+        laser_speed += 2;
     }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
@@ -187,7 +191,7 @@ public:
         surface.put_rect(laser->get_x(), laser->get_y(),
                          laser->W, laser->H,
                          laser->R, laser->G, laser->B);
-        laser->set_y(laser->get_y() + 4);
+        laser->set_y(laser->get_y() + laser->get_laser_speed());
 
         if (laser->get_y() > 480)
         {
@@ -198,6 +202,7 @@ public:
     void laser_fire()
     {
         laser = new EnemyLaser;
+        laser->set_laser_speed(laser_speed);
         laser->set_x(rect.x + rect.w / 2);
         laser->set_y(rect.y + rect.h);
     }
@@ -207,6 +212,7 @@ private:
     bool alive;
     bool attack;
     EnemyLaser *laser;
+    int laser_speed;
 };
 
 class RedAlien
@@ -214,7 +220,7 @@ class RedAlien
 public:
     RedAlien()
         : image("images/galaxian/GalaxianRedAlien.gif"),
-          rect(image.getRect()), alive(true), attack(false), laser(NULL)
+          rect(image.getRect()), alive(true), attack(false), laser(NULL), laser_speed(4)
     {}
     ~RedAlien()
     {
@@ -258,6 +264,10 @@ public:
     int get_w()
     {
         return rect.w;
+    }
+    void set_laser_speed()
+    {
+        laser_speed += 2;
     }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
@@ -305,11 +315,12 @@ public:
         surface.put_rect(laser->get_x(), laser->get_y(),
                          laser->W, laser->H,
                          laser->R, laser->G, laser->B);
-        laser->set_y(laser->get_y() + 4);
+        laser->set_y(laser->get_y() + laser->get_laser_speed());
     }
     void laser_fire()
     {
         laser = new EnemyLaser;
+        laser->set_laser_speed(laser_speed);
         laser->set_x(rect.x + rect.w / 2);
         laser->set_y(rect.y + rect.h);
     }    
@@ -319,6 +330,7 @@ private:
     bool alive;
     bool attack;
     EnemyLaser *laser;
+    int laser_speed;
 };
 
 class PurpleAlien
@@ -326,7 +338,7 @@ class PurpleAlien
 public:
     PurpleAlien()
         : image("images/galaxian/GalaxianPurpleAlien.gif"),
-          rect(image.getRect()), alive(true), attack(false), laser(NULL)
+          rect(image.getRect()), alive(true), attack(false), laser(NULL), laser_speed(4)
     {}
     ~PurpleAlien()
     {
@@ -370,6 +382,10 @@ public:
     int get_w()
     {
         return rect.w;
+    }
+    void set_laser_speed()
+    {
+        laser_speed += 2;
     }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
@@ -417,11 +433,12 @@ public:
         surface.put_rect(laser->get_x(), laser->get_y(),
                          laser->W, laser->H,
                          laser->R, laser->G, laser->B);
-        laser->set_y(laser->get_y() + 4);
+        laser->set_y(laser->get_y() + laser->get_laser_speed());
     }
     void laser_fire()
     {
         laser = new EnemyLaser;
+        laser->set_laser_speed(laser_speed);
         laser->set_x(rect.x + rect.w / 2);
         laser->set_y(rect.y + rect.h);
     }
@@ -431,6 +448,7 @@ private:
     bool alive;
     bool attack;
     EnemyLaser *laser;
+    int laser_speed;
 };
 
 class FlagShip
@@ -438,7 +456,7 @@ class FlagShip
 public:
     FlagShip()
         : image("images/galaxian/GalaxianFlagship.gif"),
-          rect(image.getRect()), alive(true), attack(false), laser(NULL)
+          rect(image.getRect()), alive(true), attack(false), laser(NULL), laser_speed(4)
     {}
     ~FlagShip()
     {
@@ -482,6 +500,10 @@ public:
     int get_w()
     {
         return rect.w;
+    }
+    void set_laser_speed()
+    {
+        laser_speed += 2;
     }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
@@ -529,11 +551,12 @@ public:
         surface.put_rect(laser->get_x(), laser->get_y(),
                          laser->W, laser->H,
                          laser->R, laser->G, laser->B);
-        laser->set_y(laser->get_y() + 4);
+        laser->set_y(laser->get_y() + laser->get_laser_speed());
     }
     void laser_fire()
     {
         laser = new EnemyLaser;
+        laser->set_laser_speed(laser_speed);
         laser->set_x(rect.x + rect.w / 2);
         laser->set_y(rect.y + rect.h);
     }
@@ -543,6 +566,7 @@ private:
     bool alive;
     bool attack;
     EnemyLaser *laser;
+    int laser_speed;
 };
 
 struct Aliens
@@ -551,6 +575,7 @@ struct Aliens
     PurpleAlien purple[SHIPS_MAX];
     RedAlien red[SHIPS_MAX];
     FlagShip flagship[SHIPS_MAX];
+    int wave = 1;
 };
 
 class Laser
