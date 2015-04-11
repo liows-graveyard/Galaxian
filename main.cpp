@@ -21,13 +21,13 @@
 
 bool intro()
 {
-    
+    std::cout << "starting!" << std::endl;
     Surface surface(W, H);
 	Event event;
 
 	Font title_font("fonts/Nintendo.ttf", 70);
 	Color c0 = {0, 255, 0};
-	Image title(title_font.render("Galaxian", c0));
+	Image title(title_font.render("Galaxian", c0));         
 	Rect rect_title = title.getRect();
 
     Font text_font("fonts/Nintendo.ttf", 18);
@@ -39,7 +39,6 @@ bool intro()
     Color c2 = {0, 255, 255};
     Image points(points_font.render("Convoy     Charger", c2));
     Rect rect_points = points.getRect();
-
     Image sat(text_font.render("- Score Advance Table -", c1));
     Rect rect_sat = sat.getRect();
 
@@ -249,6 +248,7 @@ void game()
     //    the aliens are moving in.
     //----------------------------------------------//
     struct Aliens alien;
+    
     Surface surface(W, H);
 	Event event;
     Galaxip startship;
@@ -257,7 +257,6 @@ void game()
     int enemy_y = 60;
     int laser_timer = 1;
     bool enemies_moving_left = true;
-
     while (1) /**  Loop while the game is playing. **/
     {
         int enemy_x = enemy_x_seed; /** initial x of the first enemy **/
@@ -270,12 +269,12 @@ void game()
         for (int i = 0; i < SHIPS_MAX; i++)
         {
             //----------------------------------------------//
-            // Draw all of the enemy ships.
+            // Draw all of the enemy ships and lasers.
             //----------------------------------------------//
-            alien.flagship[i].paint(surface, enemy_x, enemy_y);
-            alien.red[i].paint(surface, enemy_x, enemy_y);
-            alien.purple[i].paint(surface, enemy_x, enemy_y);
-            alien.aqua[i].paint(surface, enemy_x, enemy_y);
+            alien.flagship[i].paint(surface, enemy_x, enemy_y, startship);
+            alien.red[i].paint(surface, enemy_x, enemy_y, startship);
+            alien.purple[i].paint(surface, enemy_x, enemy_y, startship);
+            alien.aqua[i].paint(surface, enemy_x, enemy_y, startship);
 
             enemy_x += ENEMY_SPACING; /** update enemy spacing **/
         }
@@ -296,14 +295,14 @@ void game()
         // Fire lasers.
         //----------------------------------------------//
         KeyPressed keypressed = get_keypressed();
-        if (keypressed[SPACE] && laser_timer == 0)
+        if (keypressed[SPACE] && laser_timer == 0 && startship.is_alive())
         {
             for (int i = 0; i < LSR_MAX; i++)
             {
                 if (laser[i].fire_laser(laser_timer, startship)) break;
             }
         }
-
+        
         //----------------------------------------------//
         // Draw the lasers.
         //----------------------------------------------//
