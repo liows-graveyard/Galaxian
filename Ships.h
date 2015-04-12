@@ -145,6 +145,14 @@ public:
     {
         laser_speed += 2;
     }
+    bool attack_mode()
+    {
+        attack = true;
+    }
+    bool ship_mode()
+    {
+        return attack;
+    }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
         //----------------------------------------------//
@@ -269,6 +277,14 @@ public:
     {
         laser_speed += 2;
     }
+    bool attack_mode()
+    {
+        attack = true;
+    }
+    bool ship_mode()
+    {
+        return attack;
+    }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
         //----------------------------------------------//
@@ -387,6 +403,14 @@ public:
     {
         laser_speed += 2;
     }
+    bool attack_mode()
+    {
+        attack = true;
+    }
+    bool ship_mode()
+    {
+        return attack;
+    }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {
         //----------------------------------------------//
@@ -504,6 +528,14 @@ public:
     void set_laser_speed()
     {
         laser_speed += 2;
+    }
+    bool attack_mode()
+    {
+        attack = true;
+    }
+    bool ship_mode()
+    {
+        return attack;
     }
     void paint(Surface & surface, const int & x, const int & y, Galaxip & g)
     {

@@ -262,6 +262,7 @@ void game()
     int enemy_y = 0 - ENEMY_SPACING_Y * 4;;
     int laser_timer = 1;
     int alien_counter = SHIPS_MAX * 4;
+    int yinc = 5;
     bool enemies_moving_left = true;
     while (1) /**  Loop while the game is playing. **/
     {
@@ -279,7 +280,38 @@ void game()
                 //----------------------------------------------//
                 // Draw all of the enemy ships and lasers.
                 //----------------------------------------------//
-                alien.flagship[i].paint(surface, enemy_x, enemy_y, startship);
+
+                //----------------------------------------------//
+                // LOGIC IS APPLIED, HOWEVER NEED TO FIGURE OUT
+                // HOW TO MAKE THE SHIP MOVE SLOWLY INSIDE OF THE
+                // WHILE LOOP INSTEAD OF MAKING IT GO TOO QUICK
+                //----------------------------------------------//
+                /*
+                if (alien.flagship[i].is_alive())
+                {
+                    if (rand() % 1000 == 0)
+                    {
+                        alien.flagship[i].attack_mode();
+                        if (alien.flagship[i].ship_mode())
+                        {
+                            while (alien.flagship[i].get_y() <= 480)
+                            {
+                                alien.flagship[i].set_y(alien.flagship[i].
+                                                        get_y() + yinc);
+                                alien.flagship[i].paint(surface, enemy_x,
+                                                        alien.flagship[i].
+                                                        get_y(), startship);
+                            }       
+                        }
+                    }
+                    
+                    else
+                    //{
+                */
+                        alien.flagship[i].paint(surface, enemy_x,
+                                                enemy_y, startship);
+                        //}
+                        // }
                 alien.red[i].paint(surface, enemy_x, enemy_y, startship);
                 alien.purple[i].paint(surface, enemy_x, enemy_y, startship);
                 alien.aqua[i].paint(surface, enemy_x, enemy_y, startship);
